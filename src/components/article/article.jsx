@@ -17,7 +17,7 @@ function Article({
   updatedAt,
   favoritesCount,
   description,
-  authorization
+  authorization,
 }) {
   return (
     <Card
@@ -32,7 +32,7 @@ function Article({
         <div style={{ maxWidth: '80%' }}>
           <NavLink to={`/article/${slug}`}>{title}</NavLink>
           <Button
-            disabled={ !authorization && true}
+            disabled={!authorization && true}
             type="link"
             style={{ width: '20px', marginLeft: '10px' }}
             icon={<HeartOutlined />}

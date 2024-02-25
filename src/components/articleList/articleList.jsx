@@ -9,7 +9,7 @@ function ArticleList({ articles, page, articlesCount, authorization }) {
   return (
     <div>
       {articles.map((el) => (
-        <Article key={el.slug} {...el} authorization={authorization}/>
+        <Article key={el.slug} {...el} authorization={authorization} />
       ))}
       <ArticlePagination
         currentPage={page}
