@@ -6,10 +6,14 @@ import { connect, useDispatch } from 'react-redux';
 
 import './register.css';
 import { registration } from '../../store/userReducer';
+import SkeletonForm from '../../skeleton/form';
 
 const { Text, Link } = Typography;
-function RegistrationForm({ err, authorization }) {
+function RegistrationForm({ err, authorization, loading }) {
+  if (loading) return <SkeletonForm />;
+  // if (loading) return <h1>form</h1>;
   if (authorization) return <Navigate to={'/profile'} />;
+
   const dispatch = useDispatch();
   const {
     register,
@@ -141,6 +145,7 @@ function RegistrationForm({ err, authorization }) {
 const mapStateToProps = (state) => {
   return {
     err: state.user.errors,
+    loading: state.user.loading,
     authorization: state.user.authorization,
   };
 };

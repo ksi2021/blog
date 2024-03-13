@@ -1,18 +1,20 @@
-import { Card, Avatar, Button, Tag, Popconfirm } from 'antd';
+import { Card, Avatar, Button, Tag, Popconfirm, Alert } from 'antd';
 import { matchRoutes, NavLink, useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { connect, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import Markdown from 'react-markdown';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { HeartOutlined } from '@ant-design/icons';
 
-import { getArticleBySlug, deleteArticle } from '../../store/articleReducer';
+import {
+  getArticleBySlug,
+  deleteArticle,
+} from '../../store/articleReducer';
+import SkeletonArticlePage from '../../skeleton/articlePage';
+import FavoriteButton from '../../actionButtons/favoriteButton';
 
 import avatarImage from './avatar.png';
-import headerImage from './heart.svg';
 
-function ArticlePage({ article, user, authorization }) {
+function ArticlePage({ article, user, authorization, loading }) {
   const { slug: id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -27,7 +29,22 @@ function ArticlePage({ article, user, authorization }) {
     navigate('/');
   };
 
-  if (!article) return <h1>article not found</h1>;
+  if (loading) return <SkeletonArticlePage />;
+  if (!article)
+    return (
+      <Alert
+        message="Error"
+        description="Article not found"
+        type="error"
+        showIcon
+        style={{
+          width: '50%',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          marginTop: 30,
+        }}
+      />
+    );
 
   return (
     <Card
@@ -41,14 +58,23 @@ function ArticlePage({ article, user, authorization }) {
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div style={{ maxWidth: '80%' }}>
           <span>{article.title}</span>
-          <Button
-            type="link"
-            style={{ width: '20px', marginLeft: '10px' }}
-            icon={<HeartOutlined />}
-          />
+          {/* <Button */}
+          {/*   disabled={!authorization && true} */}
+          {/*   type="link" */}
+          {/*   style={{ width: '20px', marginLeft: '10px', color: article.favorited ? 'red': '#1677ff'}} */}
+          {/*   icon={<HeartOutlined />} */}
+          {/*   onClick={() => */}
+          {/*     // eslint-disable-next-line no-nested-ternary */}
+          {/*     authorization */}
+          {/*       ? article.favorited */}
+          {/*         ? dispatch(dislikeArticle(article.slug)) */}
+          {/*         : dispatch(likeArticle(article.slug)) */}
+          {/*       : null */}
+          {/*   } */}
+          {/* /> */}
+          <FavoriteButton slug={article.slug} favorited={article.favorited} authorization={authorization}/>
           {article.favoritesCount}
           <div>
-            {/* eslint-disable-next-line no-shadow */}
             {article.tagList.map((tag, id) => (
               <Tag
                 key={id}
@@ -78,26 +104,26 @@ function ArticlePage({ article, user, authorization }) {
           {authorization &&
             user &&
             user.username === article.author.username && (
-              <div>
-                <Button.Group>
-                  <Popconfirm
-                    title="Вы уверены?"
-                    placement={'left'}
-                    onConfirm={confirmDelete}
-                    okText="Да"
-                    cancelText="Нет"
-                  >
-                    <Button danger>Delete</Button>
-                  </Popconfirm>
-                  <Button
-                    style={{ borderColor: 'green', color: 'green' }}
-                    onClick={() => navigate(`/articles/${article.slug}/edit`)}
-                  >
-                    Edit
-                  </Button>
-                </Button.Group>
-              </div>
-            )}
+            <div>
+              <Button.Group>
+                <Popconfirm
+                  title="Вы уверены?"
+                  placement={'left'}
+                  onConfirm={confirmDelete}
+                  okText="Да"
+                  cancelText="Нет"
+                >
+                  <Button danger>Delete</Button>
+                </Popconfirm>
+                <Button
+                  style={{ borderColor: 'green', color: 'green' }}
+                  onClick={() => navigate(`/articles/${article.slug}/edit`)}
+                >
+                  Edit
+                </Button>
+              </Button.Group>
+            </div>
+          )}
         </div>
       </div>
 
@@ -113,6 +139,7 @@ const mapStateToProps = (state) => {
     article: state.article.article,
     authorization: state.user.authorization,
     user: state.user.user,
+    loading: state.article.loading,
   };
 };
 

@@ -1,13 +1,11 @@
-import { Card, Avatar, Button, Tag } from 'antd';
-import { Link, NavLink } from 'react-router-dom';
+import { Card, Avatar, Tag } from 'antd';
+import { NavLink } from 'react-router-dom';
 import { format } from 'date-fns';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { HeartOutlined } from '@ant-design/icons';
 
 import ArticlePagination from '../pagination/pagination';
+import FavoriteButton from '../actionButtons/favoriteButton';
 
 import avatarImage from './avatar.png';
-import headerImage from './heart.svg';
 
 function Article({
   slug,
@@ -18,6 +16,7 @@ function Article({
   favoritesCount,
   description,
   authorization,
+  favorited
 }) {
   return (
     <Card
@@ -31,12 +30,13 @@ function Article({
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div style={{ maxWidth: '80%' }}>
           <NavLink to={`/article/${slug}`}>{title}</NavLink>
-          <Button
-            disabled={!authorization && true}
-            type="link"
-            style={{ width: '20px', marginLeft: '10px' }}
-            icon={<HeartOutlined />}
-          />
+          {/* <Button */}
+          {/*   disabled={!authorization && true} */}
+          {/*   type="link" */}
+          {/*   style={{ width: '20px', marginLeft: '10px' }} */}
+          {/*   icon={<HeartOutlined />} */}
+          {/* /> */}
+          <FavoriteButton slug={slug} favorited={favorited} authorization={authorization}/>
           {favoritesCount}
           <div>
             {tagList.map((tag, id) => (

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Form, Input, Space } from 'antd';
+import { Alert, Button, Form, Input, Space } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import './articleForm.css';
@@ -11,36 +11,72 @@ import {
   getArticleBySlug,
   updateArticle,
 } from '../../store/articleReducer';
+import SkeletonForm from '../../skeleton/form';
 
-function ArticleForm({ isEdit, authorization, article, user }) {
-  if (!authorization) return <Navigate to={'/sign-in'} />;
-  if (article.author.username !== user.username) return <Navigate to={'/'} />;
-
+function ArticleForm({
+  isEdit,
+  authorization,
+  article,
+  user,
+  loading,
+  userLOADING,
+}) {
   const { slug: id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getArticleBySlug(id));
+    if (isEdit) dispatch(getArticleBySlug(id));
   }, [id]);
 
   const [form] = useForm();
   const onFinish = (data) => {
-    // eslint-disable-next-line no-unused-expressions
-    isEdit
-      ? dispatch(updateArticle({ article: data, slug: id }))
-      : dispatch(createArticle(data));
+    if(isEdit)dispatch(updateArticle({ article: data, slug: id }));
+    else dispatch(createArticle(data));
     navigate('/');
   };
+  const editArticleData = {
+    title: article?.title,
+    description: article?.description,
+    tagList: article?.tagList,
+    body: article?.body,
+  };
+
+  const createArticleData = {
+    title: '',
+    description: '',
+    tagList: [],
+    body: '',
+  };
+
+  useEffect(() => {
+    form.setFieldsValue(isEdit ? editArticleData : createArticleData);
+  }, [isEdit, loading]);
+
+  if (userLOADING) return <SkeletonForm />;
+  // if (userLOADING) return <h1>form</h1>;
+  if (!authorization) return <Navigate to={'/sign-in'} />;
+  if (isEdit && !article)
+    return (
+      <Alert
+        message="Error"
+        description="Article not found"
+        type="error"
+        showIcon
+        style={{
+          width: '50%',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          marginTop: 30,
+        }}
+      />
+    );
+  if (isEdit && article.author.username !== user.username)
+    return <Navigate to={'/'} />;
 
   return (
     <Form
-      initialValues={{
-        title: article.title,
-        description: article.description,
-        tagList: article.tagList,
-        body: article.body,
-      }}
+      // initialValues={isEdit ? editArticleData : createArticleData}
       layout="vertical"
       form={form}
       onFinish={onFinish}
@@ -55,7 +91,6 @@ function ArticleForm({ isEdit, authorization, article, user }) {
       <h2 style={{ textAlign: 'center' }}>
         {isEdit ? 'Edit article' : 'Create new article'}
       </h2>
-
       <Form.Item
         hasFeedback
         label="Title"
@@ -174,7 +209,9 @@ const mapStateToProps = (state) => {
   return {
     authorization: state.user.authorization,
     article: state.article.article,
+    loading: state.article.loading,
     user: state.user.user,
+    userLOADING: state.user.loading,
   };
 };
 

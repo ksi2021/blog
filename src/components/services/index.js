@@ -71,7 +71,6 @@ export const fetchAuthoriseByToken = async () => {
   });
   // Возвращаем данные из ответа
   response = await response.json();
-  // eslint-disable-next-line consistent-return
   return response;
 };
 export const fetchUpdateUser = async (data) => {
@@ -87,7 +86,6 @@ export const fetchUpdateUser = async (data) => {
   });
   // Возвращаем данные из ответа
   response = await response.json();
-  // eslint-disable-next-line consistent-return
   return response;
 };
 
@@ -103,7 +101,6 @@ export const fetchCreateArticle = async (article) => {
     body: JSON.stringify({ article }),
   });
   response = await response.json();
-  // eslint-disable-next-line consistent-return
   return response;
 };
 export const fetchUpdateArticle = async (data) => {
@@ -119,22 +116,22 @@ export const fetchUpdateArticle = async (data) => {
     body: JSON.stringify({ article }),
   });
   response = await response.json();
-  // eslint-disable-next-line consistent-return
   return response;
 };
 
 export const fetchDeleteArticle = async (slug) => {
   const token = localStorage.getItem('TOKEN');
   if (!token) return;
-  let response = await fetch(`https://blog.kata.academy/api/articles/${slug}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+  const response = await fetch(
+    `https://blog.kata.academy/api/articles/${slug}`,
+    {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     },
-  });
-  response = await response.json();
-  // eslint-disable-next-line consistent-return
+  );
   return response;
 };
 
@@ -152,7 +149,6 @@ export const fetchLikeArticle = async (slug) => {
     },
   );
   response = await response.json();
-  // eslint-disable-next-line consistent-return
   return response;
 };
 
@@ -160,7 +156,7 @@ export const fetchDislikeArticle = async (slug) => {
   const token = localStorage.getItem('TOKEN');
   if (!token) return;
   let response = await fetch(
-    `https://blog.kata.academy/api/articles/${slug}/`,
+    `https://blog.kata.academy/api/articles/${slug}/favorite`,
     {
       method: 'DELETE',
       headers: {
@@ -170,6 +166,5 @@ export const fetchDislikeArticle = async (slug) => {
     },
   );
   response = await response.json();
-  // eslint-disable-next-line consistent-return
   return response;
 };

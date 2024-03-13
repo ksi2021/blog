@@ -5,6 +5,7 @@ import { connect, useDispatch } from 'react-redux';
 
 import { logOut } from '../store/userReducer';
 import avatarImage from '../article/avatar.png';
+import './header.css';
 
 function Header({ user, authorization }) {
   const dispath = useDispatch();
@@ -38,8 +39,9 @@ function Header({ user, authorization }) {
           >
             Create article
           </Button>
-          {user?.username}
+          <span className="username">{user?.username}</span>
           <Avatar
+            className="avatar"
             style={{ verticalAlign: 'middle', marginLeft: '5px' }}
             src={<img src={user?.image || avatarImage} alt="avatar" />}
             size="large"

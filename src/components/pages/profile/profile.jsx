@@ -8,9 +8,13 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { update } from '../../store/userReducer';
+import SkeletonForm from '../../skeleton/form';
+import { getArticles } from '../../store/articleReducer';
 
 const { Text, Link } = Typography;
-function ProfileForm({ authorization, user }) {
+function ProfileForm({ authorization, user, loading , page }) {
+  if (loading) return <SkeletonForm />;
+  // if (loading) return <h1>form</h1>;
   if (!authorization) return <Navigate to={'/sign-in'} />;
 
   const schema = yup.object().shape({
@@ -50,7 +54,14 @@ function ProfileForm({ authorization, user }) {
   password.current = watch('password', '');
 
   const onSubmit = (data) => {
-    dispatch(update(data));
+    const successData = {};
+    const keys = Object.keys(data);
+    keys.forEach((key) => {
+      if (data[key]) successData[key] = data[key];
+    });
+    dispatch(update(successData)).then(() => {
+      dispatch(getArticles(page));
+    });
   };
 
   return (
@@ -119,7 +130,9 @@ function ProfileForm({ authorization, user }) {
 const mapStateToProps = (state) => {
   return {
     authorization: state.user.authorization,
+    loading: state.user.loading,
     user: state.user.user,
+    page: state.article.page
   };
 };
 

@@ -67,17 +67,35 @@ export const counterSlice = createSlice({
       if (errors.length !== state.errors.length) state.errors = errors;
     });
 
+    builder.addCase(authorise.pending, (state, action) => {
+      state.loading = true;
+    });
     builder.addCase(authorise.fulfilled, (state, action) => {
       if (action.payload?.user) {
-        state.user = action.payload.user;
-        state.authorization = true;
+        return {
+          ...state,
+          user: action.payload.user,
+          authorization: true,
+          loading: false,
+        };
       }
+      return { ...state, loading: false };
+    });
+    builder.addCase(authorise.rejected, (state, action) => {
+      state.loading = false;
     });
 
+    builder.addCase(update.pending, (state, action) => {
+      state.loading = true;
+    });
     builder.addCase(update.fulfilled, (state, action) => {
       if (action.payload?.user) {
-        state.user = action.payload.user;
+        return { ...state, user: action.payload.user, loading: false };
       }
+      return { ...state, loading: false };
+    });
+    builder.addCase(update.rejected, (state, action) => {
+      state.loading = false;
     });
   },
 });

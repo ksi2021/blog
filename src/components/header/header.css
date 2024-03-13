@@ -1,0 +1,12 @@
+/**{*/
+/*    transition: all .3s;*/
+/*}*/
+
+.username:hover{
+    text-shadow: #a1caff 1px 0 10px;
+    cursor: pointer;
+}
+.avatar:hover{
+   border: 1px solid #a1caff;
+    cursor: pointer;
+}
